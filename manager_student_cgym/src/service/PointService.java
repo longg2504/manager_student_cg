@@ -29,6 +29,26 @@ public class PointService {
         return null;
     }
 
+    public List<Point> findPointById(int idStudent){
+        List<Point> result = new ArrayList<>();
+        for(Point items :points){
+            if(items.getIdStudent() == idStudent){
+                result.add(items);
+            }
+        }
+        return result;
+    }
+
+    public List<Point> findPointByClass(EClass eClass){
+        List<Point> result = new ArrayList<>();
+        for(Point items :points){
+            if(items.geteClass().getId() == eClass.getId()){
+                result.add(items);
+            }
+        }
+        return result;
+    }
+
     public void addStudentPoint(Point p){
         points.add(p);
         CSVUtils.writeFile(PATH,points);
