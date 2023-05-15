@@ -24,6 +24,23 @@ public class CSVUtils {
         }
     }
 
+    public static <T> void writeData(String path, T data) {
+        try {
+            FileWriter fileWriter = new FileWriter(path,true);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+
+                bufferedWriter.write(data.toString() +"\n");
+
+            bufferedWriter.close();
+            fileWriter.close();
+
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+    }
+
+
     public static <T> List<T> readFile(String path, Class<T> tClass) {
 
         List<T> datas = new ArrayList<>();

@@ -3,7 +3,6 @@ package model;
 import utils.DateUtils;
 
 import java.util.Date;
-import java.util.List;
 
 public class Student implements IModel<Student> {
     private int id;
@@ -13,40 +12,21 @@ public class Student implements IModel<Student> {
 
     private String address;
 
-    private EClass eClass;
-
-    private List<Point> pointList;
+    private int idEClass;
 
     public Student(){
 
     }
 
-    public Student(int id, String name, EGender eGender, Date bod, String address, EClass eClass) {
+    public Student(int id, String name, EGender eGender, Date bod, String address, int idEClass) {
         this.id = id;
         this.name = name;
         this.eGender = eGender;
         this.bod = bod;
         this.address = address;
-        this.eClass = eClass;
+        this.idEClass = idEClass;
     }
 
-    public Student(int id, String name, EGender eGender, Date bod, String address, EClass eClass, List<Point> pointList) {
-        this.id = id;
-        this.name = name;
-        this.eGender = eGender;
-        this.bod = bod;
-        this.address = address;
-        this.eClass = eClass;
-        this.pointList = pointList;
-    }
-
-    public List<Point> getPointList() {
-        return pointList;
-    }
-
-    public void setStudentPoint(List<Point> pointList) {
-        this.pointList = pointList;
-    }
 
     public int getId() {
         return id;
@@ -88,33 +68,30 @@ public class Student implements IModel<Student> {
         this.address = address;
     }
 
-    public EClass geteClass() {
-        return eClass;
+    public int getIdEClass() {
+        return idEClass;
     }
 
-    public void seteClass(EClass eClass) {
-        this.eClass = eClass;
+    public void setIdEClass(int idEClass) {
+        this.idEClass = idEClass;
     }
 
     @Override
     public void parseData(String line) {
-        //int id, String name, EGender gender, Date bod, String address, EClass eClass //
+        //int id, String name, EGender eGender, Date bod, String address, int eClass //
         String[] items = line.split(",");
-        int idStudent = Integer.parseInt(items[0]);
-        EGender eGenderStudent = EGender.getEGenderByName(items[2]);
-        Date bodStudent = DateUtils.parse(items[3]);
-        EClass eClassStudent = EClass.getEClassByName(items[5]);
-        this.setId(idStudent);
-        this.setName(items[1]);
-        this.seteGender(eGenderStudent);
-        this.setBod(bodStudent);
-        this.setAddress(items[4]);
-        this.seteClass(eClassStudent);
+        id = Integer.parseInt(items[0]);
+        name = items[1];
+        eGender = EGender.getEGenderByName(items[2]);
+        bod = DateUtils.parse(items[3]);
+        address = items[4];
+        idEClass = Integer.parseInt(items[5]);
+
     }
 
     public String toString() {
         //int id, String name, EGender gender, Date bod, String address, EClass eClass //
         return String.format("%s,%s,%s,%s,%s,%s",this.id, this.name,this.eGender.getName(),DateUtils.format(this.bod),
-                this.address,this.eClass);
+                this.address,this.idEClass);
     }
 }

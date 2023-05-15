@@ -1,25 +1,27 @@
 package model;
 
-import utils.DateUtils;
+import java.beans.JavaBean;
+import java.util.concurrent.RecursiveAction;
 
-public class EClass implements IModel<EClass> {
-    private int id;
-    private String name;
+public class Course implements IModel<Course> {
+    private  long id;
 
-    public EClass() {
+    private  String name;
+
+    public Course(){
 
     }
 
-    public EClass(int id , String name){
+    public Course(long id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -41,6 +43,6 @@ public class EClass implements IModel<EClass> {
 
     @Override
     public String toString() {
-        return String.format("%s,%s",this.id, this.name);
+        return String.format("%s,%s",this.id,this.name);
     }
 }

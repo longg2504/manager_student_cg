@@ -1,12 +1,11 @@
-import model.Point;
+//import model.Point;
+import view.Menu;
 import view.PointView;
 import view.StudentView;
 
 public class Main {
     public static void main(String[] args) {
-//        StudentView studentView =new StudentView();
-//        studentView.launcherStudent();
-        PointView pointView = new PointView();
-        pointView.launcherPoint();
+        Menu menu = new Menu();
+        menu.menuView();
     }
 }

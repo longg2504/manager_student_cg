@@ -1,23 +1,47 @@
 package model;
 
-import utils.DateUtils;
-
 public class Point implements IModel<Point> {
     private int idStudent;
+    private int idEClass;
 
-    private EClass eClass;
-    private float pointTH;
-    private float pointLT;
+    private Float pointTH;
+    private Float pointLT;
 
-    public Point()  {
+    private Float caseStudyPoint;
+
+    private Float interviewPoint;
+
+    private int idSchedule;
+
+    private Double pointAVG;
+
+    private EPass isPass;
+
+
+    public Point() {
 
     }
 
-    public Point(int idStudent, EClass eClass, float pointTH, float pointLT) {
+    public Point(int idStudent, int idEClass, Float pointTH, Float pointLT, Float caseStudyPoint,
+                 Float interviewPoint, int idSchedule, Double pointAVG, EPass isPass) {
         this.idStudent = idStudent;
-        this.eClass = eClass;
+        this.idEClass = idEClass;
         this.pointTH = pointTH;
         this.pointLT = pointLT;
+        this.caseStudyPoint = caseStudyPoint;
+        this.interviewPoint = interviewPoint;
+        this.idSchedule = idSchedule;
+        this.pointAVG = pointAVG;
+        this.isPass = isPass;
+    }
+
+
+    public int getIdEClass() {
+        return idEClass;
+    }
+
+    public void setIdEClass(int idEClass) {
+        this.idEClass = idEClass;
     }
 
     public int getIdStudent() {
@@ -28,19 +52,11 @@ public class Point implements IModel<Point> {
         this.idStudent = idStudent;
     }
 
-    public EClass geteClass() {
-        return eClass;
-    }
-
-    public void seteClass(EClass eClass) {
-        this.eClass = eClass;
-    }
-
     public float getPointTH() {
         return pointTH;
     }
 
-    public void setPointTH(float pointTH) {
+    public void setPointTH(Float pointTH) {
         this.pointTH = pointTH;
     }
 
@@ -48,28 +64,70 @@ public class Point implements IModel<Point> {
         return pointLT;
     }
 
-    public void setPointLT(float pointLT) {
+    public void setPointLT(Float pointLT) {
         this.pointLT = pointLT;
     }
 
+    public float getCaseStudyPoint() {
+        return caseStudyPoint;
+    }
 
-    @Override
-    public void parseData(String line) {
-        //int id, EClass eClasss, float pointTH, float pointLT//
-        String[] items = line.split(",");
-        int idStudent = Integer.parseInt(items[0]);
-        EClass eClassStudent = EClass.getEClassByName(items[1]);
-        float pointTHs = Float.parseFloat(items[2]) ;
-        float pointLTs = Float.parseFloat(items[3]);
-        this.setIdStudent(idStudent);
-        this.seteClass(eClassStudent);
-        this.setPointTH(pointTHs);
-        this.setPointLT(pointLTs);
+    public void setCaseStudyPoint(Float caseStudyPoint) {
+        this.caseStudyPoint = caseStudyPoint;
+    }
+
+    public float getinterviewPoint() {
+        return interviewPoint;
+    }
+
+    public void setinterviewPoint(Float interviewPoint) {
+        this.interviewPoint = interviewPoint;
+    }
+
+    public int getIdSchedule() {
+        return idSchedule;
+    }
+
+    public void setIdSchedule(int idSchedule) {
+        this.idSchedule = idSchedule;
+    }
+
+    public double getPointAVG() {
+        return pointAVG;
+    }
+
+    public void setPointAVG(Double pointAVG) {
+        this.pointAVG = pointAVG;
+    }
+
+    public EPass getIsPass() {
+        return isPass;
+    }
+
+    public void setIsPass(EPass isPass) {
+        this.isPass = isPass;
     }
 
     @Override
+    public void parseData(String line) {
+        String[] items = line.split(",");
+//        int idStudent, int EClass, float pointTH, float pointLT, float caseStudy, float interview,
+//        int idSchedule, double pointAVG, boolean isPass
+        idStudent = Integer.parseInt(items[0]);
+        idEClass =Integer.parseInt(items[1]);
+        pointTH = Float.parseFloat(items[2]);
+        pointLT = Float.parseFloat(items[3]);
+        caseStudyPoint = Float.parseFloat(items[4]);
+        interviewPoint = Float.parseFloat(items[5]);
+        idSchedule = Integer.parseInt(items[6]);
+        pointAVG = Double.parseDouble(items[7]);
+        isPass = EPass.valueOf(items[8]);
+
+    }
+    @Override
     public String toString() {
-        //int id, EClass eClasss, float pointTH, float pointLT//
-        return String.format("%s,%s,%s,%s", this.idStudent,this.eClass,this.pointTH,this.pointLT);
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s",this.idStudent,this.idEClass ,this.pointTH, this.pointLT
+                , this.caseStudyPoint, this.interviewPoint, this.idSchedule, this.pointAVG, this.isPass);
+
     }
 }

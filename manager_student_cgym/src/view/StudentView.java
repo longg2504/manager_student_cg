@@ -1,8 +1,8 @@
 package view;
 
-import model.EClass;
-import model.EGender;
-import model.Student;
+import model.*;
+import service.ClassService;
+import service.PointService;
 import service.StudentService;
 import utils.DateUtils;
 
@@ -15,21 +15,29 @@ public class StudentView {
     private final static String PATH = "./src/data/student.csv";
     private Scanner scanner = new Scanner(System.in);
     private StudentService studentService;
+    private ClassService classService;
+
+    private PointService pointService;
 
     public StudentView() {
         studentService = new StudentService();
+        classService = new ClassService();
+        pointService = new PointService();
     }
 
     public void launcherStudent() {
         do{
-            System.out.println("Menu chương trình:");
-            System.out.println("Nhập 1: Xem danh sách sinh viên");
-            System.out.println("Nhập 2: Thêm sinh viên");
-            System.out.println("Nhập 3: Xóa sinh viên");
-            System.out.println("Nhập 4: Sửa thông tin sinh viên");
-            System.out.println("Nhập 5: Tìm sinh viên theo tên");
-            System.out.println("Nhập 6: Tìm kiếm sinh viên theo ID");
-            System.out.println("Nhập 7: Hiện danh sách sinh viên theo lớp");
+            System.out.println("╔════════════════════════════════════════════════════╗");
+            System.out.println("║                  MENU CHƯƠNG TRÌNH                 ║");
+            System.out.println("╠════════════════════════════════════════════════════╣");
+            System.out.println("║        1: Xem danh sách sinh viên                  ║");
+            System.out.println("║        2: Thêm sinh viên                           ║");
+            System.out.println("║        3: Xóa sinh viên                            ║");
+            System.out.println("║        4: Sửa thông tin sinh viên                  ║");
+            System.out.println("║        5: Tìm sinh viên theo tên                   ║");
+            System.out.println("║        6: Tìm kiếm sinh viên theo ID               ║");
+            System.out.println("║        7: Hiện danh sách sinh viên theo lớp        ║");
+            System.out.println("╚════════════════════════════════════════════════════╝");
 
             int actionMenu = Integer.parseInt(scanner.nextLine());
             switch (actionMenu) {
@@ -63,12 +71,9 @@ public class StudentView {
 
     private void showStudentByClass() {
         System.out.println("chọn lớp muốn hiện danh sách sinh viên");
-        for (EClass eClass : EClass.values()) {
-            System.out.printf("chọn %-5s %-5s \n", eClass.getId(), eClass.getName());
-        }
+        System.out.println(classService.findAllEClass());
         int idEClass = Integer.parseInt(scanner.nextLine());
-        EClass eClass = EClass.getEClassById(idEClass);
-        var students = studentService.findStudentByClass(eClass);
+        var students = studentService.findStudentByClass(idEClass);
         for (Student student : students) {
             System.out.println(student);
         }
@@ -145,13 +150,13 @@ public class StudentView {
         System.out.println(student);
 
         System.out.println("Chọn lớp mới: ");
-        for (EClass eClass : EClass.values()) {
-            System.out.printf("chọn %-5s %-5s \n", eClass.getId(), eClass.getName());
-        }
+        System.out.println(classService.findAllEClass());
         int idEClass = Integer.parseInt(scanner.nextLine());
-        EClass eClass = EClass.getEClassById(idEClass);
+        student.setIdEClass(idEClass);
+        System.out.println("Nhập địa chỉ mới: ");
+        String address = scanner.nextLine();
 
-        student.seteClass(eClass);
+        student.setAddress(address);
         studentService.editStudent(student.getId());
 
         System.out.println("Sửa thành công: ");
@@ -162,10 +167,7 @@ public class StudentView {
         System.out.println("Thông tin sinh viên: ");
         System.out.println(student);
 
-        System.out.println("Nhập địa chỉ mới: ");
-        String address = scanner.nextLine();
 
-        student.setAddress(address);
         studentService.editStudent(student.getId());
 
         System.out.println("Sửa thành công: ");
@@ -278,15 +280,13 @@ public class StudentView {
         System.out.println("Nhập vào địa chỉ");
         String address = scanner.nextLine();
         System.out.println("chọn lớp học");
-        for (EClass eClass : EClass.values()) {
-            System.out.printf("chọn %-5s %-5s \n", eClass.getId(), eClass.getName());
-        }
+        System.out.println(classService.findAllEClass());
         int idEClass = Integer.parseInt(scanner.nextLine());
-        EClass eClass = EClass.getEClassById(idEClass);
+        Student student = new Student(id, name, eGender, bod, address, idEClass);
+        Point point = new Point(1,1,0.0f,0.0f,0.0f,0.0f,1,0.0d, EPass.STUDING);
 
-        Student student = new Student(id, name, eGender, bod, address, eClass);
         studentService.addStudent(student);
-
+        pointService.addStudentPoint(point);
         showStudent(studentService.findAllStudent());
 
     }
@@ -297,7 +297,7 @@ public class StudentView {
         for (Student p : allStudent) {
             //int id, String name, byte age, String address, EBlock eBlock, ERole eRole// {
             System.out.printf("%-15s %-30s %-10s %-15s %-20s %-20s\n", p.getId(), p.getName(), p.geteGender().getName(),
-                    DateUtils.format(p.getBod()), p.getAddress(), p.geteClass());
+                    DateUtils.format(p.getBod()), p.getAddress(), classService.findClassByID(p.getIdEClass()).getName());
         }
 
 
