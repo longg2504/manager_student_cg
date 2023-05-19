@@ -19,4 +19,13 @@ public class ValidateUtils {
     public static boolean isAddValid(String address){
         return Pattern.compile(ADDREE_REGEX).matcher(address).matches();
     }
+
+    public static String parseCommaToChar(String s) {
+        String s1 = s.replaceAll(",", "!");
+        return s1;
+    }
+    public static String parseCharToComma(String s) {
+        String s1 = s.replaceAll("!", ",");
+        return s1;
+    }
 }

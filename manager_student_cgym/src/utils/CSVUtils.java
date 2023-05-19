@@ -28,10 +28,7 @@ public class CSVUtils {
         try {
             FileWriter fileWriter = new FileWriter(path,true);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-
-
-                bufferedWriter.write(data.toString() +"\n");
-
+            bufferedWriter.write(data.toString() +"\n");
             bufferedWriter.close();
             fileWriter.close();
 

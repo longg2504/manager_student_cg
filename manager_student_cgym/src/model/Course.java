@@ -1,8 +1,5 @@
 package model;
 
-import java.beans.JavaBean;
-import java.util.concurrent.RecursiveAction;
-
 public class Course implements IModel<Course> {
     private  long id;
 

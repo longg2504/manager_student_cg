@@ -1,6 +1,7 @@
 package model;
 
 import utils.DateUtils;
+import utils.ValidateUtils;
 
 import java.util.Date;
 
@@ -12,19 +13,22 @@ public class Student implements IModel<Student> {
 
     private String address;
 
-    private int idEClass;
+    private int idEClass;;
+
+    private int idCourse;
 
     public Student(){
 
     }
 
-    public Student(int id, String name, EGender eGender, Date bod, String address, int idEClass) {
+    public Student(int id, String name, EGender eGender, Date bod, String address, int idEClass,int idCourse) {
         this.id = id;
         this.name = name;
         this.eGender = eGender;
         this.bod = bod;
         this.address = address;
         this.idEClass = idEClass;
+        this.idCourse = idCourse;
     }
 
 
@@ -76,6 +80,14 @@ public class Student implements IModel<Student> {
         this.idEClass = idEClass;
     }
 
+    public int getIdCourse() {
+        return idCourse;
+    }
+
+    public void setIdCourse(int idCourse) {
+        this.idCourse = idCourse;
+    }
+
     @Override
     public void parseData(String line) {
         //int id, String name, EGender eGender, Date bod, String address, int eClass //
@@ -84,14 +96,15 @@ public class Student implements IModel<Student> {
         name = items[1];
         eGender = EGender.getEGenderByName(items[2]);
         bod = DateUtils.parse(items[3]);
-        address = items[4];
+        address = ValidateUtils.parseCharToComma(items[4]);
         idEClass = Integer.parseInt(items[5]);
+        idCourse = Integer.parseInt(items[6]);
 
     }
 
     public String toString() {
-        //int id, String name, EGender gender, Date bod, String address, EClass eClass //
-        return String.format("%s,%s,%s,%s,%s,%s",this.id, this.name,this.eGender.getName(),DateUtils.format(this.bod),
-                this.address,this.idEClass);
+        //int id, String name, EGender gender, Date bod, String address, int idEClass , int idCourse //
+        return String.format("%s,%s,%s,%s,%s,%s,%s",this.id, this.name,this.eGender.getName(),DateUtils.format(this.bod),
+                this.address,this.idEClass,this.idCourse);
     }
 }

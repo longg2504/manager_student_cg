@@ -1,287 +1,271 @@
 package view;
 
 import model.*;
-import service.ClassService;
-import service.PointService;
-import service.ScheduleService;
-import service.StudentService;
+import service.*;
 import utils.DateUtils;
 
 import java.util.List;
 import java.util.Scanner;
 
 public class PointView {
-    private final static String PATH = "./src/data/point.csv";
+    private final static String PATH = "./src/data/pointmodule1.csv";
     private Scanner scanner = new Scanner(System.in);
     private PointService pointService;
 
     private StudentService studentService;
 
-    private ScheduleService scheduleService;
+    private CourseService courseService;
 
     private ClassService classService;
+
+    private ClassView classView;
+
+    private ModuleView moduleView;
 
     public PointView() {
         pointService = new PointService();
         studentService = new StudentService();
-        scheduleService = new ScheduleService();
+        courseService = new CourseService();
         classService = new ClassService();
+        classView = new ClassView();
+        moduleView = new ModuleView();
     }
-
-    public void launcherPoint(){
-        do{
-            System.out.println("╔════════════════════════════════════════╗");
-            System.out.println("║             Menu chương trình          ║");
-            System.out.println("╠════════════════════════════════════════╣");
-            System.out.println("║  1.Xem danh sách điểm sinh viên        ║");
-            System.out.println("║  2.Thêm điểm sinh viên                 ║");
-            System.out.println("║  3.Xóa điểm sinh viên                  ║");
-            System.out.println("║  4.Sửa điểm sinh viên                  ║");
-            System.out.println("║  5.Hiển thị danh sách điểm theo lớp    ║");
-            System.out.println("║  6.Hiển thị điểm của sinh viên theo ID ║");
-            System.out.println("║  7.Hiển thị danh sách sinh viên đã đạt ║");
-            System.out.println("╚════════════════════════════════════════╝");
+    public void menuPoint(){
+        System.out.println("                    ╔════════════════════════════════════════╗");
+        System.out.println("                    ║             Menu chương trình          ║");
+        System.out.println("                    ╠════════════════════════════════════════╣");
+        System.out.println("                    ║  1.Xem danh sách điểm sinh viên        ║");
+        System.out.println("                    ║  2.Nhập điểm sinh viên                 ║");
+        System.out.println("                    ║  3.Xóa điểm sinh viên                  ║");
+        System.out.println("                    ║  4.Hiển thị danh sách điểm theo lớp    ║");
+        System.out.println("                    ║  5.Hiển thị danh sách sinh viên đã đạt ║");
+        System.out.println("                    ║  6.Xem lịch sử học của sinh viên       ║");
+        System.out.println("                    ║  7.Exits                               ║");
+        System.out.println("                    ╚════════════════════════════════════════╝");
+        System.out.print("Vui lòng chọn một lựa chọn: ");
+    }
+    public void launcherPoint() {
+        boolean actionCheck = false;
+        do {
+            menuPoint();
             int actionMenu = Integer.parseInt(scanner.nextLine());
             switch (actionMenu) {
                 case 1:
-                    showListPoint(pointService.findAllStudentPoint());
+                    showListStudent();
+                    actionCheck = checkActionContinue();
                     break;
                 case 2:
                     showCreateStudentPoint();
+                    actionCheck = checkActionContinue();
                     break;
                 case 3:
                     deleteStudentPoint();
+                    actionCheck = checkActionContinue();
                     break;
                 case 4:
-                    showListPoint(pointService.findAllStudentPoint());
-                    updateStudentPoint();
+                    showListPointStudentByClass();
+                    actionCheck = checkActionContinue();
                     break;
                 case 5:
-                    showListPointStudentByClass();
+                    showListStudentPass();
+                    actionCheck = checkActionContinue();
                     break;
                 case 6:
-                    showStudentPointByID();
+                    System.out.println("Nhập vào id của sinh viên muốn xem lịch sử học");
+                    int id = Integer.parseInt(scanner.nextLine());
+                    showListPoint(pointService.findClassStudent(id));
+                    actionCheck = checkActionContinue();
                     break;
                 case 7:
-                    showListStudentPass();
+                    actionCheck= true;
+                    actionCheck = checkActionContinue();
                     break;
-
             }
-        }while (true);
+        } while (!actionCheck);
+        if(actionCheck){
+            Menu menu = new Menu();
+            menu.menuView();
+        }
+    }
 
+    private void showListStudent(){
+        boolean checkAction = false;
+        do{
+            try{
+                System.out.println("Nhập Module muốn xem danh sách điểm");
+                int idCourse = Integer.parseInt(scanner.nextLine());
+                showListPoint(pointService.findStudentByIDAndModule(idCourse));
+                checkAction = false;
+            }catch (NumberFormatException e){
+                System.out.println("nhập sai định dạng vui lòng nhập lại");
+                checkAction = true;
+            }
+        }while (checkAction);
     }
 
     private void showListStudentPass() {
-       showListPoint(pointService.findListPointByIsPass(EPass.PASS));
-    }
-
-    private void showStudentPointByID() {
-        System.out.println("Nhập ID của sinh viên muốn xem bảng điểm");
-        int idStudent = Integer.parseInt(scanner.nextLine());
-        showListPoint(pointService.findPointById(idStudent));
-
+        boolean checkAction = false;
+        do {
+            try{
+                System.out.println("Nhập vào Module muốn xem danh sách");
+                moduleView.showListCourse(courseService.findAllCourse());
+                int idCourse = Integer.parseInt(scanner.nextLine());
+                showListPoint(pointService.findListPointByIsPass(EPass.PASS,idCourse));
+                checkAction = checkAgaint();
+            }catch (NumberFormatException e){
+                System.out.println("Nhập sai định dạng vui lòng nhập lại");
+                checkAction = true;
+            }
+        }while (checkAction);
     }
 
     private void showListPointStudentByClass() {
-        System.out.println("Chọn Lớp muốn xem danh sách điểm");
-        System.out.println(classService.findAllEClass());
-        int idEClass = Integer.parseInt(scanner.nextLine());
-        showListPoint(pointService.findStudentByClass(idEClass));
-
-
-        }
-
-    private void updateStudentPoint() {
-        Point point = inputIdStudent();
-        if(point != null){
-            boolean checkActionEdit;
-            do{
-                //int id, String name, EGender gender, Date bod, String address, EClass eClass //
-                checkActionEdit = false;
-                System.out.println("Bạn muốn sửa thông tin gì: ");
-                System.out.println("1.Điểm Thực Hành");
-                System.out.println("2.Điểm Lý Thuyết");
-                System.out.println("3.Điểm Case Study");
-                System.out.println("4.Điểm Interview");
-                System.out.println("0.Exits");
-                int actionEdit = Integer.parseInt(scanner.nextLine());
-                switch (actionEdit) {
-                    case 1:
-                        inputPointTH(point);
-                        break;
-                    case 2:
-                        inputPointLT(point);
-                        break;
-                    case 3:
-                        inputPointCaseStudy(point);
-                        break;
-                    case 4:
-                        inputPointInterview(point);
-                        break;
-                    case 0:
-                        checkActionEdit = false;
-                        break;
-                    default:
-                        System.out.println("Nhập sai. Vui lòng nhập lại ");
-                        checkActionEdit = true;
-                }
-
-
-            }while(checkActionEdit);
-        }
-    }
-
-
-    private void inputPointLT(Point point) {
-        System.out.println("Thông tin bảng điểm sinh viên: ");
-        System.out.println(point);
-
-        System.out.println("Nhập điểm lý thuyết mới: ");
-        Float pointLT = Float.parseFloat(scanner.nextLine());
-
-        point.setPointLT(pointLT);
-        pointService.editStudentPoint(point.getIdStudent());
-
-        System.out.println("Sửa thành công: ");
-        System.out.println(point);
-    }
-
-    private void inputPointTH(Point point) {
-        System.out.println("Thông tin bảng điểm sinh viên: ");
-        System.out.println(point);
-
-        System.out.println("Nhập điểm thực hành mới: ");
-        Float pointTH = Float.parseFloat(scanner.nextLine());
-
-        point.setPointTH(pointTH);
-        pointService.editStudentPoint(point.getIdStudent());
-
-        System.out.println("Sửa thành công: ");
-        System.out.println(point);
-    }
-    private void inputPointInterview(Point point) {
-        System.out.println("Thông tin bảng điểm sinh viên: ");
-        System.out.println(point);
-
-        System.out.println("Nhập điểm phỏng vấn mới: ");
-        Float pointInterview = Float.parseFloat(scanner.nextLine());
-
-        point.setinterviewPoint(pointInterview);
-        pointService.editStudentPoint(point.getIdStudent());
-
-        System.out.println("Sửa thành công: ");
-        System.out.println(point);
-    }
-    private void inputPointCaseStudy(Point point) {
-        System.out.println("Thông tin bảng điểm sinh viên: ");
-        System.out.println(point);
-
-        System.out.println("Nhập điểm Case Study mới: ");
-        Float PointCaseStudy = Float.parseFloat(scanner.nextLine());
-
-        point.setCaseStudyPoint(PointCaseStudy);
-        pointService.editStudentPoint(point.getIdStudent());
-
-        System.out.println("Sửa thành công: ");
-        System.out.println(point);
-    }
-
-    private Point inputIdStudent() {
-        Point point = null;
-        boolean checkEditStudentValid = false;
-        do{
+        boolean checkAction = false;
+        do {
             try{
-                System.out.println("Nhập ID sinh viên bạn muốn sửa bảng điểm");
-                int idStudent = Integer.parseInt(scanner.nextLine());
-                point = pointService.findPointByIdStudent(idStudent);
-                if(point == null){
-                    System.out.println("ID sinh viên không hợp lệ");
-                    System.out.println("Chọn 1. Nhập lại");
-                    System.out.println("Chọn 2. Quay lại");
-                    int actionEditId = Integer.parseInt(scanner.nextLine());
-                    switch (actionEditId) {
-                        case 1:
-                            checkEditStudentValid = true;
-                            break;
-                        case 2:
-                            checkEditStudentValid = false;
-                            break;
-                    }
-                }
-            }catch (NumberFormatException numberFormatException){
-                System.out.println("Id không đúng định dạng vui lòng nhập lại");
-                checkEditStudentValid = true;
+                System.out.println("Nhập Module muốn xem danh sách điểm");
+                moduleView.showListCourse(courseService.findAllCourse());
+                int idCourse = Integer.parseInt(scanner.nextLine());
+                System.out.println("Chọn Lớp muốn xem danh sách điểm");
+                classView.showListClass(classService.findAllEClass());
+                int idEClass = Integer.parseInt(scanner.nextLine());
+                showListPoint(pointService.findStudentByClass(idEClass,idCourse));
+                checkAction = checkAgaint();
+            }catch (NumberFormatException e){
+                System.out.println("Nhập sai định dạng vui lòng nhập lại");
+                checkAction = true;
             }
-        }while(checkEditStudentValid);
-        return point;
+        }while (checkAction);
     }
-
 
     private void deleteStudentPoint() {
-        System.out.println("Nhập vào ID của sinh viên muốn khỏi danh sách điểm");
-        int idStudent = Integer.parseInt(scanner.nextLine());
-        pointService.deletePointStudent(idStudent);
-    }
-
-    private void inputPoint(){
-        boolean flag = false;
+        boolean checkAction = false;
         do{
-            System.out.println("Nhập vào ID muốn thêm điểm");
-            int idStudent = Integer.parseInt(scanner.nextLine());
-            if(studentService.existStudent(idStudent)){
-                int idClass = studentService.findStudentByID(idStudent).getIdEClass();
-                System.out.println("Nhập Điểm Thực Hành");
-                Float pointTH = Float.parseFloat(scanner.nextLine());
-                System.out.println("Nhập Điểm Lý Thuyết");
-                Float pointLT = Float.parseFloat(scanner.nextLine());
-                System.out.println("Nhập Điểm CaseStudy");
-                Float caseStudyPoint = Float.parseFloat(scanner.nextLine());
-                System.out.println("Nhập Điểm Phỏng Vấn");
-                Float interviewPoint = Float.parseFloat(scanner.nextLine());
-                Double pointAVG = (double) ((pointTH+pointLT+caseStudyPoint+interviewPoint)/4);
-                EPass isPass;
-                if(pointAVG > 6.0){
-                    isPass = EPass.PASS;
-                }else{
-                    isPass = EPass.FAIL;
-                }
-                //int pointID, int idStudent, float pointTH, float pointLT, float caseStudyPoint, float interviewPoint,
-                //                 int schedule.csv, double pointAVG, EPass isPass
-                Point point = new Point(idStudent,idClass,pointTH, pointLT,caseStudyPoint,interviewPoint,1,pointAVG,isPass);
-                pointService.editStudentPoints(point);
-                pointService.checkIsPass(point);
-                showListPoint(pointService.findAllStudentPoint());
-
-                flag = false;
-            }else{
-                System.out.println("Sinh viên này không có trong danh sánh của codegym");
-                flag = true;
+            try{
+                System.out.println("chọn Module");
+                moduleView.showListCourse(courseService.findAllCourse());
+                int idCourse = Integer.parseInt(scanner.nextLine());
+                System.out.println("Nhập vào ID của sinh viên muốn khỏi danh sách điểm");
+                int idStudent = Integer.parseInt(scanner.nextLine());
+                pointService.deletePointStudent(idStudent,idCourse);
+                System.out.println("Đã xoá thành công");
+                showListPoint(pointService.findStudentByIDAndModule(idCourse));
+                checkAction = checkAgaint();
+            }catch (NumberFormatException E){
+                System.out.println("nhập sai định dạng vui lòng nhập lại");
+                checkAction = true;
             }
-        }while (flag);
+        }while (checkAction);
     }
-// update lai
+
+
+
+    // update lai
     private void showCreateStudentPoint() {
-        showListPoint(pointService.findAllStudentPoint());
         inputPoint();
     }
+    private void inputPoint() {
+        boolean flag = false;
+        do {
+            try{
+                    System.out.println("chọn Module");
+                    moduleView.showListCourse(courseService.findAllCourse());
+                    int idCourse = Integer.parseInt(scanner.nextLine());
+                    showListPoint(pointService.findStudentByIDAndModule(idCourse));
+                    System.out.println("Nhập vào ID muốn nhập điểm");
+                    int idStudent = Integer.parseInt(scanner.nextLine());
+                    Point point = pointService.checkSTUDING(idStudent,idCourse);
+                    if (studentService.isStudentExist(idStudent) && point != null){
+                        System.out.println("Nhập Điểm Thực Hành");
+                        point.setPointTH( Float.parseFloat(scanner.nextLine()));
+                        System.out.println("Nhập Điểm Lý Thuyết");
+                        point.setPointLT( Float.parseFloat(scanner.nextLine()));
+                        System.out.println("Nhập Điểm CaseStudy");
+                        point.setCaseStudyPoint( Float.parseFloat(scanner.nextLine()));
+                        System.out.println("Nhập Điểm Phỏng Vấn");
+                        point.setinterviewPoint( Float.parseFloat(scanner.nextLine()));
+                        point.setPointAVG((double) ((point.getPointLT() + point.getPointTH()
+                                + point.getinterviewPoint() + point.getCaseStudyPoint()) / 4));
+                        EPass isPass;
+                        if (point.getPointAVG() > 6.0) {
+                            isPass = EPass.PASS;
+                        } else {
+                            isPass = EPass.FAIL;
+                        }
+                        point.setIsPass(isPass);
+                        //int pointID, int idStudent, float pointTH, float pointLT, float caseStudyPoint, float interviewPoint,
+                        //                 int schedule.csv, double pointAVG, EPass isPass
+                        pointService.editStudentPoints(point, idCourse);
+                        pointService.checkIsPass(point);
+                        showListPoint(pointService.findAllStudentPoint(idCourse));
+                        flag = checkAgaint();
+                    }
+                else{
+                    System.out.println("Sinh viên này không có trong danh sánh của codegym");
+                    flag = true;
 
-
+                }
+            } catch (Exception e){
+                System.out.println("nhập sai định dạng vui lòng nhập lại");
+                flag = true;
+            }
+        } while(flag);
+    }
 
 
     private void showListPoint(List<Point> allPoint) {
         //int idStudent, EClass eClasss, float pointTH, float pointLT //
-        System.out.printf("%-15s %-30s %-10s %-15s %-15s %-15s %-15s %-15s %-15s\n", "ID","Name" ,"Class", "pointTH", "pointLT" , "pointCaseStudy"
-                ,"pointInterview","pointAVG","status");
+        System.out.println("+------------+---------------------------+------------+----------+---------------+---------------+-----------------+-----------------+---------------+---------------+");
+        System.out.printf("| %-10s | %-25s | %-10s | %-8s | %-13s | %-13s | %-15s | %-15s | %-13s | %-13s |\n",
+                "ID", "Name", "Class", "Module", "pointTH", "pointLT", "pointCaseStudy", "pointInterview", "pointAVG", "status");
+        System.out.println("+------------+---------------------------+------------+----------+---------------+---------------+-----------------+-----------------+---------------+---------------+");
         for (Point p : allPoint) {
-                    //int idStudent, EClass eClasss, float pointTH, float pointLT //
-                    System.out.printf("%-15s %-30s %-10s %-15s %-15s %-15s %-15s %-15s %-15s\n",p.getIdStudent()
-                            , studentService.findStudentByID(p.getIdStudent()).getName()
-                            , classService.findClassByID(p.getIdEClass()).getName()
-                            , p.getPointTH(),p.getPointLT()
-                            ,p.getCaseStudyPoint(),p.getinterviewPoint(),p.getPointAVG(),p.getIsPass());
-                }
-            }
+            System.out.printf("| %-10s | %-25s | %-10s | %-8s | %-13s | %-13s | %-15s | %-15s | %-13s | %-13s |\n", p.getIdStudent()
+                    , studentService.findStudentByID(p.getIdStudent()).getName()
+                    , classService.findClassByID(p.getIdEClass()).getName()
+                    , courseService.findCourseByID(p.getIdCourse()).getName()
+                    , p.getPointTH(), p.getPointLT()
+                    , p.getCaseStudyPoint(), p.getinterviewPoint(), p.getPointAVG(), p.getIsPass());
+            System.out.println("+------------+---------------------------+------------+----------+---------------+---------------+-----------------+-----------------+---------------+---------------+");
+        }
+    }
 
+    public boolean checkAgaint() {
+        boolean checkActionContinue = false;
+        do {
+            System.out.println("Nhập \"Y\" để tiếp tục, nhập \"N\" để quay về giao diện menu trước");
+            String choice = scanner.nextLine().trim().toUpperCase();
+            switch (choice) {
+                case "Y":
+                    return true;
+                case "N":
+                    return false;
+                default:
+                    System.out.println("Nhập sai lựa chọn");
+                    checkActionContinue = false;
+                    break;
+            }
+        } while (!checkActionContinue);
+        return true;
+    }
+
+        public boolean checkActionContinue() {
+        boolean checkActionContinue = false;
+        do {
+            System.out.println("Nhập \"Y\" để quay về giao diện trước đó, nhập \"N\" để quay về giao diện Menu!");
+            String choice = scanner.nextLine().trim().toUpperCase();
+            switch (choice) {
+                case "Y":
+                    return false;
+                case "N":
+                    return true;
+                default:
+                    checkActionContinue = false;
+            }
+        } while (!checkActionContinue);
+        return true;
+    }
 }
+
 
 

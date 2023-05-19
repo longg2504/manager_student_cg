@@ -4,6 +4,8 @@ public class Point implements IModel<Point> {
     private int idStudent;
     private int idEClass;
 
+    private int idCourse;
+
     private Float pointTH;
     private Float pointLT;
 
@@ -11,7 +13,6 @@ public class Point implements IModel<Point> {
 
     private Float interviewPoint;
 
-    private int idSchedule;
 
     private Double pointAVG;
 
@@ -22,15 +23,15 @@ public class Point implements IModel<Point> {
 
     }
 
-    public Point(int idStudent, int idEClass, Float pointTH, Float pointLT, Float caseStudyPoint,
-                 Float interviewPoint, int idSchedule, Double pointAVG, EPass isPass) {
+    public Point(int idStudent, int idEClass,int idCourse, Float pointTH, Float pointLT, Float caseStudyPoint,
+                 Float interviewPoint, Double pointAVG, EPass isPass) {
         this.idStudent = idStudent;
         this.idEClass = idEClass;
+        this.idCourse = idCourse;
         this.pointTH = pointTH;
         this.pointLT = pointLT;
         this.caseStudyPoint = caseStudyPoint;
         this.interviewPoint = interviewPoint;
-        this.idSchedule = idSchedule;
         this.pointAVG = pointAVG;
         this.isPass = isPass;
     }
@@ -84,13 +85,6 @@ public class Point implements IModel<Point> {
         this.interviewPoint = interviewPoint;
     }
 
-    public int getIdSchedule() {
-        return idSchedule;
-    }
-
-    public void setIdSchedule(int idSchedule) {
-        this.idSchedule = idSchedule;
-    }
 
     public double getPointAVG() {
         return pointAVG;
@@ -108,26 +102,34 @@ public class Point implements IModel<Point> {
         this.isPass = isPass;
     }
 
+    public int getIdCourse() {
+        return idCourse;
+    }
+
+    public void setIdCourse(int idCourse) {
+        this.idCourse = idCourse;
+    }
+
     @Override
     public void parseData(String line) {
         String[] items = line.split(",");
-//        int idStudent, int EClass, float pointTH, float pointLT, float caseStudy, float interview,
-//        int idSchedule, double pointAVG, boolean isPass
+//        int idStudent, int EClass,int idCourse, float pointTH, float pointLT, float caseStudy, float interview,
+//        double pointAVG, boolean isPass
         idStudent = Integer.parseInt(items[0]);
         idEClass =Integer.parseInt(items[1]);
-        pointTH = Float.parseFloat(items[2]);
-        pointLT = Float.parseFloat(items[3]);
-        caseStudyPoint = Float.parseFloat(items[4]);
-        interviewPoint = Float.parseFloat(items[5]);
-        idSchedule = Integer.parseInt(items[6]);
+        idCourse = Integer.parseInt(items[2]);
+        pointTH = Float.parseFloat(items[3]);
+        pointLT = Float.parseFloat(items[4]);
+        caseStudyPoint = Float.parseFloat(items[5]);
+        interviewPoint = Float.parseFloat(items[6]);
         pointAVG = Double.parseDouble(items[7]);
         isPass = EPass.valueOf(items[8]);
 
     }
     @Override
     public String toString() {
-        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s",this.idStudent,this.idEClass ,this.pointTH, this.pointLT
-                , this.caseStudyPoint, this.interviewPoint, this.idSchedule, this.pointAVG, this.isPass);
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s",this.idStudent,this.idEClass,this.idCourse,this.pointTH, this.pointLT
+                ,this.caseStudyPoint, this.interviewPoint, this.pointAVG, this.isPass);
 
     }
 }

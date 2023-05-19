@@ -1,4 +1,4 @@
-//import model.Point;
+import model.Point;
 import view.Menu;
 import view.PointView;
 import view.StudentView;
