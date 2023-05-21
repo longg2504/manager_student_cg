@@ -7,7 +7,7 @@ import service.PointService;
 import service.StudentService;
 import utils.DateUtils;
 import utils.ValidateUtils;
-import javax.xml.crypto.Data;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -43,7 +43,8 @@ public class StudentView {
         System.out.println("                    ║        4: Sửa thông tin sinh viên                  ║");
         System.out.println("                    ║        5: Tìm sinh viên theo tên                   ║");
         System.out.println("                    ║        6: Tìm kiếm sinh viên theo ID               ║");
-        System.out.println("                    ║        7: Quay lại Menu                            ║");
+        System.out.println("                    ║        7: Xem danh sách sinh viên theo module & lớp║");
+        System.out.println("                    ║        8: Quay lại Menu                            ║");
         System.out.println("                    ╚════════════════════════════════════════════════════╝");
         System.out.print("Vui lòng chọn một lựa chọn: ");
     }
@@ -56,7 +57,7 @@ public class StudentView {
                 int actionMenu = Integer.parseInt(scanner.nextLine());
                 switch (actionMenu) {
                     case 1:
-                        showlistStudent();
+                        showListStudentByClass();
                         checkAction = checkActionContinue();
                         break;
                     case 2:
@@ -81,6 +82,12 @@ public class StudentView {
                         checkAction = checkActionContinue();
                         break;
                     case 7:
+
+                    case 8:
+                        checkAction = true;
+                        break;
+                    default:
+                        System.out.println("thông tin chọn không đúng xin vui lòng nhập lại");
                         checkAction = true;
                         break;
 
@@ -92,8 +99,8 @@ public class StudentView {
 
         } while (!checkAction);
         if (checkAction) {
-            Menu menu = new Menu();
-            menu.menuView();
+            AdminView adminView = new AdminView();
+            adminView.menuView();
         }
     }
 
@@ -110,7 +117,7 @@ public class StudentView {
                 continue;
             }
             if(idCourse <= 0 || idCourse > 6) {
-                System.out.println("chỉ được chọn Module 1-5");
+                System.out.println("chỉ được chọn Module 1-6");
                 checkAction = true;
             }
             else {
@@ -119,6 +126,54 @@ public class StudentView {
 
         } while (checkAction);
         showStudent(studentService.findStudentList(idCourse));
+        checkAction = checkAgaint();
+    }
+
+    public void showListStudentByClass(){
+        boolean checkIdCourse = true;
+        boolean checkAction = true;
+        boolean checkIdEClass = true;
+        int idCourse = 0;
+        int idEClass = 0;
+        do {
+            do {
+                System.out.println("Nhập vào ID Module muốn xem danh sách");
+                moduleView.showListCourse(courseService.findAllCourse());
+                try {
+                    idCourse = Integer.parseInt(scanner.nextLine());
+                } catch (NumberFormatException e) {
+                    System.out.println("ID không đúng định dạng vui lòng nhập lại!!!!");
+                    continue;
+                }
+                if(idCourse <= 0 || idCourse > 6) {
+                    System.out.println("chỉ được chọn Module 1-6");
+                    checkIdCourse = true;
+                }
+                else {
+                    checkIdCourse = false;
+                }
+
+            } while (checkIdCourse);
+
+            do {
+                System.out.println("Nhập vào ID Class muốn xem danh sách");
+                classView.showListClass(classService.findAllEClass());
+                try {
+                    idEClass = Integer.parseInt(scanner.nextLine());
+                } catch (NumberFormatException e) {
+                    System.out.println("ID không đúng định dạng vui lòng nhập lại!!!!");
+                    continue;
+                }
+                if(idCourse <= 0 || idCourse > 10) {
+                    System.out.println("chỉ được chọn Class 1-10");
+                    checkIdEClass = true;
+                }
+                else {
+                    checkIdEClass = false;
+                }
+            } while (checkIdEClass);
+        }while (checkAction);
+        showStudent(studentService.findStudentlListByClassAndModule(idCourse,idEClass));
         checkAction = checkAgaint();
     }
 
@@ -139,21 +194,40 @@ public class StudentView {
     }
 
     private void findStudentById() {
-        System.out.println("Nhập vào ID của sinh viên muốn tìm");
-        int idStudent = Integer.parseInt(scanner.nextLine());
-        Student student = studentService.findStudentByID(idStudent);
-        if (student != null) {
-            System.out.println(student);
-        } else {
-            System.out.println("không có sinh viên");
-        }
+        int idStudent = 0;
+        boolean checkidStudent = true;
+        do{
+            System.out.println("Nhập vào ID của sinh viên muốn tìm");
+            try{
+                idStudent = Integer.parseInt(scanner.nextLine());
+            }catch(NumberFormatException e){
+                System.out.println("Nhập sai định dạng vui lòng nhập lại");
+                continue;
+            }
+
+            if(idStudent <= 0 ){
+                System.out.println("ID sinh viên  phải lớn hơn 0");
+                checkidStudent = true;
+            }else {
+                Student student = studentService.findStudentByID(idStudent);
+                if (student != null) {
+                    System.out.println(student);
+                    checkidStudent = false;
+                } else {
+                    System.out.println("không có sinh viên");
+                    checkidStudent = false;
+                }
+            }
+        }while (checkidStudent);
+        checkidStudent = checkAgaint();
+
     }
 
     private void findNameStudent() {
         inputNameStudent();
 
     }
-
+// check format cho cái này
     private void inputNameStudent() {
         boolean checkAction = false;
         do {
@@ -191,10 +265,10 @@ public class StudentView {
                 System.out.println("ID phải lớn hơn 0");
                 checkID = true;
             } else {
-                if(studentService.isStudentExist(id)){
+                if (studentService.isStudentExist(id)) {
                     System.out.println("ID này đã có trong danh sách vui lòng nhập ID khác");
                     checkID = true;
-                }else {
+                } else {
                     checkID = false;
                 }
             }
@@ -202,7 +276,6 @@ public class StudentView {
         String name = null;
         boolean checkName = false;
         do {
-
             System.out.println("Họ và Tên");
             name = scanner.nextLine();
             if (ValidateUtils.isNameValid(name)) {
@@ -221,19 +294,18 @@ public class StudentView {
                 System.out.printf("| %-7s | %-12s |\n", eGender.getId(), eGender.getName());
                 System.out.println("+---------+--------------+");
             }
-                try {
-                    idEGender = Integer.parseInt(scanner.nextLine());
-                } catch (NumberFormatException e) {
-                    System.out.println("nhập ID phải là số ");
-                    continue;
-                }
-                if(idEGender != 1 && idEGender != 2){
-                    System.out.println("chỉ được chọn 1 trong 2 giới tính");
-                    checkGender = true;
-                }
-                else{
-                    checkGender = false;
-                }
+            try {
+                idEGender = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("nhập ID phải là số ");
+                continue;
+            }
+            if (idEGender != 1 && idEGender != 2) {
+                System.out.println("chỉ được chọn 1 trong 2 giới tính");
+                checkGender = true;
+            } else {
+                checkGender = false;
+            }
 
         } while (checkGender);
         EGender eGender = EGender.getEGenderById(idEGender);
@@ -247,36 +319,26 @@ public class StudentView {
             System.out.println("Chọn Lớp Học");
             classView.showListClass(classService.findAllEClass());
 
-            try{
+            try {
                 idEClass = Integer.parseInt(scanner.nextLine());
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 System.out.println("nhập ID sai định dạng vui lòng nhập lại");
                 continue;
             }
-            if (idEClass<=0 && idEClass>5){
+            if (idEClass <= 0 && idEClass > 5) {
                 System.out.println("nên chọn 1-5");
                 checkidEClass = true;
-            }
-            else {
+            } else {
                 checkidEClass = false;
             }
-        }while (checkidEClass);
+        } while (checkidEClass);
         Student student = new Student(id, name, eGender, bod, address, idEClass, 1);
-        Point point = new Point(id, idEClass, 1, 0.0f, 0.0f, 0.0f, 0.0f, 0.0d, EPass.STUDING);
+        Point point = new Point(id, idEClass, 1, 0.0f, 0.0f, 0.0f, 0.0f, 0.0d, EPass.STUDYING);
         studentService.addStudent(student);
         pointService.addStudentPoint(point);
         showStudent(studentService.findAllStudent());
 
-
-//            }catch (Exception e){
-//                System.out.println("nhập sai định dạng vui lòng nhập lại");
-//                checkAction = true;
-//            }
-        //int id, String name, String gender, Date bod, String address, EClass eClass //
-
-
     }
-
     public boolean checkAgaint() {
         boolean checkActionContinue = false;
         do {
@@ -329,23 +391,36 @@ public class StudentView {
                     default:
                         System.out.println("Nhập sai. Vui lòng nhập lại ");
                         checkActionEdit = true;
+                        break;
                 }
             } while (checkActionEdit);
         }
     }
 
     private void inputClassStudent(Student student) {
-        System.out.println("Thông tin sinh viên: ");
-        System.out.println(student);
+        boolean checkIDEClass = true;
+        int idEClass = 0;
+        do{
+            System.out.println("Thông tin sinh viên: ");
+            System.out.println(student);
 
-        System.out.println("Chọn lớp mới: ");
-        System.out.println(classService.findAllEClass());
-        int idEClass = Integer.parseInt(scanner.nextLine());
+            System.out.println("Chọn lớp mới: ");
+            System.out.println(classService.findAllEClass());
+            try{
+                idEClass = Integer.parseInt(scanner.nextLine());
+            }catch (NumberFormatException e){
+                System.out.println("ID nhập vào không đúng vui lòng nhập lại");
+                continue;
+            }
+            if(idEClass <= 0 && idEClass > 10){
+                System.out.println("xin chọn các lớp có trong danh sách (1-10)");
+                checkIDEClass = true;
+            }
+            else{
+                checkIDEClass = false;
+            }
+        }while (checkIDEClass);
         student.setIdEClass(idEClass);
-        System.out.println("Nhập địa chỉ mới: ");
-        String address = scanner.nextLine();
-
-        student.setAddress(address);
         studentService.editStudent(student.getId(), student);
 
         System.out.println("Sửa thành công: ");
@@ -353,12 +428,22 @@ public class StudentView {
     }
 
     private void inputAddressStudent(Student student) {
-        System.out.println("Thông tin sinh viên: ");
-        System.out.println(student);
-
-
+        String address = null;
+        boolean checkAddress = false;
+        do {
+            System.out.println("Thông tin sinh viên: ");
+            System.out.println(student);
+            System.out.println("Nhập địa chỉ mới: ");
+            address = scanner.nextLine();
+            if (ValidateUtils.isNameValid(address)) {
+                checkAddress = false;
+            } else {
+                System.out.println("Địa chỉ không hợp lệ vui lòng nhập lại");
+                checkAddress = true;
+            }
+        } while (checkAddress);
+        student.setAddress(address);
         studentService.editStudent(student.getId(), student);
-
         System.out.println("Sửa thành công: ");
         System.out.println(student);
     }
@@ -367,9 +452,7 @@ public class StudentView {
         System.out.println("Thông tin sinh viên: ");
         System.out.println(student);
 
-        System.out.println("Nhập ngày sinh mới: ");
-        System.out.println("Ngày sinh(Nhập theo định dạng dd-MM-yyyy)");
-        Date bod = DateUtils.parse(scanner.nextLine());
+        Date bod = DateUtils.parse(DateUtils.getDateOfBirth());
 
         student.setBod(bod);
         studentService.editStudent(student.getId(), student);
@@ -379,37 +462,62 @@ public class StudentView {
     }
 
     private void inputGenderStudent(Student student) {
-        System.out.println("Thông tin sinh viên: ");
-        System.out.println(student);
+        boolean checkChoice = true;
+        int idEGender = 0;
+        do{
+            System.out.println("Thông tin sinh viên: ");
+            System.out.println(student);
 
-        System.out.println("Chọn lại giới tính: ");
-        for (EGender eGender : EGender.values()) {
-            System.out.printf("chọn %-5s %-5s \n", eGender.getId(), eGender.getName());
-        }
-        int idEGender = Integer.parseInt(scanner.nextLine());
+            System.out.println("Chọn lại giới tính: ");
+            for (EGender eGender : EGender.values()) {
+                System.out.printf("chọn %-5s %-5s \n", eGender.getId(), eGender.getName());
+            }
+            try{
+                idEGender = Integer.parseInt(scanner.nextLine());
+            }catch (NumberFormatException e){
+                System.out.println("dữ liệu bạn nhập không đúng vui lòng nhập lại");
+                continue;
+            }
+            if(idEGender<= 0 && idEGender >2 ){
+                System.out.println("lựa chọn của bạn không có vui lòng chọn lại ");
+                checkChoice = true;
+            }
+            else{
+                checkChoice = false;
+            }
+        }while (checkChoice);
+
+
         EGender eGender = EGender.getEGenderById(idEGender);
-
         student.seteGender(eGender);
         studentService.editStudent(student.getId(), student);
 
         System.out.println("Sửa thành công: ");
         System.out.println(student);
     }
-
     private void inputNameStudent(Student student) {
-        System.out.println("Thông tin sinh viên: ");
-        System.out.println(student);
 
-        System.out.println("Nhập Họ tên mới: ");
-        String name = scanner.nextLine();
+        String name = null;
+        boolean checkName = false;
+        do {
+            System.out.println("Thông tin sinh viên: ");
+            System.out.println(student);
 
+            System.out.println("Nhập Họ tên mới: ");
+            name = scanner.nextLine();
+            if (ValidateUtils.isNameValid(name)) {
+                checkName = false;
+            } else {
+                System.out.println("Họ Tên không hợp lệ vui lòng nhập lại");
+                checkName = true;
+            }
+        } while (checkName);
         student.setName(name);
         studentService.editStudent(student.getId(), student);
 
         System.out.println("Sửa thành công: ");
         System.out.println(student);
     }
-
     private Student inputIdStudent() {
         Student student = null;
         boolean checkEditStudentValid = false;

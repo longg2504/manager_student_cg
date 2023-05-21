@@ -1,11 +1,15 @@
-import model.Point;
-import view.Menu;
-import view.PointView;
-import view.StudentView;
+import model.Customer;
+import view.AdminView;
+import view.LoginView;
 
 public class Main {
     public static void main(String[] args) {
-        Menu menu = new Menu();
-        menu.menuView();
+        LoginView loginView = new LoginView();
+        Customer customer = loginView.login();
+
+        if (customer.geteRole().name().equals("ADMIN")) {
+            AdminView adminView = new AdminView();
+            adminView.menuView();
+        }
     }
 }

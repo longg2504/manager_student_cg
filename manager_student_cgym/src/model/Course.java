@@ -1,7 +1,7 @@
 package model;
 
 public class Course implements IModel<Course> {
-    private  long id;
+    private  int id;
 
     private  String name;
 
@@ -9,7 +9,7 @@ public class Course implements IModel<Course> {
 
     }
 
-    public Course(long id, String name) {
+    public Course(int id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -18,7 +18,7 @@ public class Course implements IModel<Course> {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

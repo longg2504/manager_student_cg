@@ -28,6 +28,16 @@ public class StudentService {
         }
         return result;
     }
+    public List<Student> findStudentlListByClassAndModule(int idCourse , int idEClass){
+        List<Student> list = findAllStudent();
+        List<Student> result = new ArrayList<>();
+        for (Student item : list) {
+            if (item.getIdCourse() == idCourse && item.getIdEClass() == idEClass) {
+                result.add(item);
+            }
+        }
+        return result;
+    }
 
     public void addStudent(Student student) {
         List<Student> list = findAllStudent();
@@ -46,9 +56,9 @@ public class StudentService {
                 item.setAddress(student.getAddress());
                 item.setIdEClass(student.getIdEClass());
                 item.setIdCourse(student.getIdCourse());
-
             }
         }
+        CSVUtils.writeFile(PATH, list);
     }
 
 
@@ -70,7 +80,6 @@ public class StudentService {
                 list.remove(item);
             }
         }
-
         CSVUtils.writeFile(PATH, list);
     }
     public void deleteStudentAllList(int idStudent){

@@ -2,7 +2,6 @@ package view;
 
 import model.*;
 import service.*;
-import utils.DateUtils;
 
 import java.util.List;
 import java.util.Scanner;
@@ -30,7 +29,8 @@ public class PointView {
         classView = new ClassView();
         moduleView = new ModuleView();
     }
-    public void menuPoint(){
+
+    public void menuPoint() {
         System.out.println("                    ╔════════════════════════════════════════╗");
         System.out.println("                    ║             Menu chương trình          ║");
         System.out.println("                    ╠════════════════════════════════════════╣");
@@ -44,6 +44,7 @@ public class PointView {
         System.out.println("                    ╚════════════════════════════════════════╝");
         System.out.print("Vui lòng chọn một lựa chọn: ");
     }
+
     public void launcherPoint() {
         boolean actionCheck = false;
         do {
@@ -77,139 +78,284 @@ public class PointView {
                     actionCheck = checkActionContinue();
                     break;
                 case 7:
-                    actionCheck= true;
-                    actionCheck = checkActionContinue();
+                    actionCheck = true;
+                    break;
+                default:
+                    System.out.println("chọn chức năng không đúng vui lòng chọn lại");
+                    actionCheck = true;
                     break;
             }
         } while (!actionCheck);
-        if(actionCheck){
-            Menu menu = new Menu();
-            menu.menuView();
+        if (actionCheck) {
+            AdminView adminView = new AdminView();
+            adminView.menuView();
         }
     }
 
-    private void showListStudent(){
-        boolean checkAction = false;
-        do{
-            try{
-                System.out.println("Nhập Module muốn xem danh sách điểm");
-                int idCourse = Integer.parseInt(scanner.nextLine());
-                showListPoint(pointService.findStudentByIDAndModule(idCourse));
-                checkAction = false;
-            }catch (NumberFormatException e){
+    private void showListStudent() {
+        boolean checkAction = true;
+        int idCourse = 0;
+        do {
+            System.out.println("Nhập Module muốn xem danh sách điểm");
+            moduleView.showListCourse(courseService.findAllCourse());
+            try {
+                idCourse = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
                 System.out.println("nhập sai định dạng vui lòng nhập lại");
-                checkAction = true;
+                continue;
             }
-        }while (checkAction);
+            if (idCourse <= 0 && idCourse > 6) {
+                System.out.println("không có module trên vui lòng chọn module có trong chương trình dạy ");
+                checkAction = true;
+            } else {
+                checkAction = false;
+            }
+        } while (checkAction);
+        showListPoint(pointService.findStudentByIDAndModule(idCourse));
     }
 
     private void showListStudentPass() {
-        boolean checkAction = false;
+        boolean checkAction = true;
+        int idCourse = 0;
         do {
-            try{
-                System.out.println("Nhập vào Module muốn xem danh sách");
-                moduleView.showListCourse(courseService.findAllCourse());
-                int idCourse = Integer.parseInt(scanner.nextLine());
-                showListPoint(pointService.findListPointByIsPass(EPass.PASS,idCourse));
-                checkAction = checkAgaint();
-            }catch (NumberFormatException e){
+            System.out.println("Nhập vào Module muốn xem danh sách");
+            moduleView.showListCourse(courseService.findAllCourse());
+            try {
+                idCourse = Integer.parseInt(scanner.nextLine());
+
+            } catch (NumberFormatException e) {
                 System.out.println("Nhập sai định dạng vui lòng nhập lại");
-                checkAction = true;
+                continue;
             }
-        }while (checkAction);
+            if (idCourse <= 0 && idCourse > 6) {
+                System.out.println("không có module trên vui lòng chọn module có trong chương trình dạy ");
+                checkAction = true;
+            } else {
+                checkAction = false;
+            }
+        } while (checkAction);
+        showListPoint(pointService.findListPointByIsPass(EPass.PASS, idCourse));
     }
 
     private void showListPointStudentByClass() {
-        boolean checkAction = false;
+        boolean checkModule = true;
+        boolean checkClass = true;
+        int idCourse = 0;
+        int idEClass = 0;
         do {
-            try{
-                System.out.println("Nhập Module muốn xem danh sách điểm");
-                moduleView.showListCourse(courseService.findAllCourse());
-                int idCourse = Integer.parseInt(scanner.nextLine());
-                System.out.println("Chọn Lớp muốn xem danh sách điểm");
-                classView.showListClass(classService.findAllEClass());
-                int idEClass = Integer.parseInt(scanner.nextLine());
-                showListPoint(pointService.findStudentByClass(idEClass,idCourse));
-                checkAction = checkAgaint();
-            }catch (NumberFormatException e){
-                System.out.println("Nhập sai định dạng vui lòng nhập lại");
-                checkAction = true;
+            System.out.println("Nhập Module muốn xem danh sách điểm");
+            moduleView.showListCourse(courseService.findAllCourse());
+            try {
+                idCourse = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("nhập sai định dạng vui lòng nhập lại");
+                continue;
             }
-        }while (checkAction);
+            if (idCourse <= 0 && idCourse > 6) {
+                System.out.println("không có module trên vui lòng chọn module có trong chương trình dạy ");
+                checkModule = true;
+            } else {
+                checkModule = false;
+            }
+        } while (checkModule);
+        do {
+            System.out.println("Chọn Lớp muốn xem danh sách điểm");
+            try {
+                idEClass = Integer.parseInt(scanner.nextLine());
+                classView.showListClass(classService.findAllEClass());
+            } catch (NumberFormatException e) {
+                System.out.println("nhập sai định dạng vui lòng nhập lại");
+                continue;
+            }
+            if (idEClass <= 0 && idEClass > 10) {
+                System.out.println("không có class trên vui lòng chọn class có trong chương trình dạy ");
+                checkClass = true;
+            } else {
+                checkClass = false;
+            }
+        } while (checkClass);
+        showListPoint(pointService.findStudentByClass(idEClass, idCourse));
+
     }
 
     private void deleteStudentPoint() {
-        boolean checkAction = false;
-        do{
-            try{
-                System.out.println("chọn Module");
-                moduleView.showListCourse(courseService.findAllCourse());
-                int idCourse = Integer.parseInt(scanner.nextLine());
-                System.out.println("Nhập vào ID của sinh viên muốn khỏi danh sách điểm");
-                int idStudent = Integer.parseInt(scanner.nextLine());
-                pointService.deletePointStudent(idStudent,idCourse);
-                System.out.println("Đã xoá thành công");
-                showListPoint(pointService.findStudentByIDAndModule(idCourse));
-                checkAction = checkAgaint();
-            }catch (NumberFormatException E){
+        boolean checkModule = true;
+        boolean checkIdStudent = true;
+        int idCourse = 0;
+        int idStudent = 0;
+        do {
+            System.out.println("Chọn Module ");
+            moduleView.showListCourse(courseService.findAllCourse());
+            try {
+                idCourse = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
                 System.out.println("nhập sai định dạng vui lòng nhập lại");
-                checkAction = true;
+                continue;
             }
-        }while (checkAction);
+            if (idCourse <= 0 && idCourse > 6) {
+                System.out.println("không có module trên vui lòng chọn module có trong chương trình dạy ");
+                checkModule = true;
+            } else {
+                checkModule = false;
+            }
+        } while (checkModule);
+        do {
+            showListPoint(pointService.findStudentByIDAndModule(idCourse));
+            System.out.println("Chọn ID muốn xoá");
+            try {
+                idStudent = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("nhập sai định dạng vui lòng nhập lại");
+                continue;
+            }
+            if (studentService.isStudentExist(idStudent)) {
+                checkIdStudent = false;
+            } else {
+                System.out.println("không có sinh viên này ");
+                checkIdStudent = true;
+            }
+        } while (checkIdStudent);
+        pointService.deletePointStudent(idStudent, idCourse);
+        System.out.println("Đã xoá thành công");
+        showListPoint(pointService.findStudentByIDAndModule(idCourse));
     }
-
 
 
     // update lai
     private void showCreateStudentPoint() {
         inputPoint();
     }
+
     private void inputPoint() {
         boolean flag = false;
-        do {
-            try{
-                    System.out.println("chọn Module");
-                    moduleView.showListCourse(courseService.findAllCourse());
-                    int idCourse = Integer.parseInt(scanner.nextLine());
-                    showListPoint(pointService.findStudentByIDAndModule(idCourse));
-                    System.out.println("Nhập vào ID muốn nhập điểm");
-                    int idStudent = Integer.parseInt(scanner.nextLine());
-                    Point point = pointService.checkSTUDING(idStudent,idCourse);
-                    if (studentService.isStudentExist(idStudent) && point != null){
-                        System.out.println("Nhập Điểm Thực Hành");
-                        point.setPointTH( Float.parseFloat(scanner.nextLine()));
-                        System.out.println("Nhập Điểm Lý Thuyết");
-                        point.setPointLT( Float.parseFloat(scanner.nextLine()));
-                        System.out.println("Nhập Điểm CaseStudy");
-                        point.setCaseStudyPoint( Float.parseFloat(scanner.nextLine()));
-                        System.out.println("Nhập Điểm Phỏng Vấn");
-                        point.setinterviewPoint( Float.parseFloat(scanner.nextLine()));
-                        point.setPointAVG((double) ((point.getPointLT() + point.getPointTH()
-                                + point.getinterviewPoint() + point.getCaseStudyPoint()) / 4));
-                        EPass isPass;
-                        if (point.getPointAVG() > 6.0) {
-                            isPass = EPass.PASS;
-                        } else {
-                            isPass = EPass.FAIL;
-                        }
-                        point.setIsPass(isPass);
-                        //int pointID, int idStudent, float pointTH, float pointLT, float caseStudyPoint, float interviewPoint,
-                        //                 int schedule.csv, double pointAVG, EPass isPass
-                        pointService.editStudentPoints(point, idCourse);
-                        pointService.checkIsPass(point);
-                        showListPoint(pointService.findAllStudentPoint(idCourse));
-                        flag = checkAgaint();
-                    }
-                else{
-                    System.out.println("Sinh viên này không có trong danh sánh của codegym");
-                    flag = true;
-
+        do{
+            int idCourse = 0;
+            int idStudent = 0;
+            boolean checkid = true;
+            boolean checkIdStudent = true;
+            do {
+                System.out.println("chọn Module");
+                moduleView.showListCourse(courseService.findAllCourse());
+                try {
+                    idCourse = Integer.parseInt(scanner.nextLine());
+                } catch (NumberFormatException e) {
+                    System.out.println("Định dạng không đúng vui lòng nhập lại");
+                    continue;
                 }
-            } catch (Exception e){
-                System.out.println("nhập sai định dạng vui lòng nhập lại");
+                if (idCourse <= 0 && idCourse > 6) {
+                    System.out.println("chỉ được chọn các module có trong danh sách");
+                    checkid = true;
+                } else {
+                    checkid = false;
+                }
+            } while (checkid);
+            showListPoint(pointService.findStudentByIDAndModule(idCourse));
+            do {
+                System.out.println("Nhập vào ID muốn nhập điểm");
+                try {
+                    idStudent = Integer.parseInt(scanner.nextLine());
+                } catch (NumberFormatException e) {
+                    System.out.println("Định dạng không đúng vui lòng nhập lại");
+                    continue;
+                }
+                if (idStudent <= 0) {
+                    System.out.println("ID nhập phải bắt đầu từ 1 ");
+                    checkIdStudent = true;
+                } else {
+                    checkIdStudent = false;
+                }
+            } while (checkIdStudent);
+            Point point = pointService.checkSTUDING(idStudent, idCourse);
+            if (studentService.isStudentExist(idStudent) && point != null) {
+                boolean checkPointTH = true;
+                boolean checkPointLT = true;
+                boolean checkPointCase = true;
+                boolean checkPointInterview = true;
+                do{
+                    System.out.println("Nhập Điểm Thực Hành");
+                    try{
+                        point.setPointTH(Float.parseFloat(scanner.nextLine()));
+                    }catch (Exception e){
+                        System.out.println("nhập điểm sai định dạng vui lòng nhập lại");
+                        continue;
+                    }
+                    if(Float.parseFloat(scanner.nextLine()) < 0 && Float.parseFloat(scanner.nextLine()) > 10){
+                        System.out.println("nhập điểm quá với giới hạn điểm (0-10)");
+                        checkPointTH = true;
+                    }
+                    else{
+                        checkPointTH = false;
+                    }
+                }while (checkPointTH);
+                do{
+                    System.out.println("Nhập Điểm Lý Thuyết");
+                    try{
+                        point.setPointLT(Float.parseFloat(scanner.nextLine()));
+                    }catch (Exception e){
+                        System.out.println("nhập điểm sai định dạng vui lòng nhập lại");
+                        continue;
+                    }
+                    if(Float.parseFloat(scanner.nextLine()) < 0 && Float.parseFloat(scanner.nextLine()) > 10){
+                        System.out.println("nhập điểm quá với giới hạn điểm (0-10)");
+                        checkPointLT = true;
+                    }
+                    else{
+                        checkPointLT = false;
+                    }
+                }while (checkPointLT);
+                do{
+                    System.out.println("Nhập Điểm CaseStudy");
+                    try{
+                        point.setCaseStudyPoint(Float.parseFloat(scanner.nextLine()));
+                    }catch (Exception e){
+                        System.out.println("nhập điểm sai định dạng vui lòng nhập lại");
+                        continue;
+                    }
+                    if(Float.parseFloat(scanner.nextLine()) < 0 && Float.parseFloat(scanner.nextLine()) > 10){
+                        System.out.println("nhập điểm quá với giới hạn điểm (0-10)");
+                        checkPointCase = true;
+                    }
+                    else{
+                        checkPointCase = false;
+                    }
+                }while (checkPointCase);
+                do{
+                    System.out.println("Nhập Điểm Phỏng Vấn");
+                    try{
+                        point.setinterviewPoint(Float.parseFloat(scanner.nextLine()));
+                    }catch (Exception e){
+                        System.out.println("nhập điểm sai định dạng vui lòng nhập lại");
+                        continue;
+                    }
+                    if(Float.parseFloat(scanner.nextLine()) < 0 && Float.parseFloat(scanner.nextLine()) > 10){
+                        System.out.println("nhập điểm quá với giới hạn điểm (0-10)");
+                        checkPointInterview = true;
+                    }
+                    else{
+                        checkPointInterview = false;
+                    }
+                }while (checkPointInterview);
+                point.setPointAVG((double) ((point.getPointLT() + point.getPointTH()
+                        + point.getinterviewPoint() + point.getCaseStudyPoint()) / 4));
+                EPass isPass;
+                if (point.getPointAVG() > 6.0) {
+                    isPass = EPass.PASS;
+                } else {
+                    isPass = EPass.FAIL;
+                }
+                point.setIsPass(isPass);
+                //int pointID, int idStudent, float pointTH, float pointLT, float caseStudyPoint, float interviewPoint,
+                //                 int schedule.csv, double pointAVG, EPass isPass
+                pointService.editStudentPoints(point, idCourse);
+                pointService.checkIsPass(point);
+                showListPoint(pointService.findAllStudentPoint(idCourse));
+                flag = checkAgaint();
+            } else {
+                System.out.println("Sinh viên này không có trong danh sánh của codegym");
                 flag = true;
             }
-        } while(flag);
+        }while (flag);
+
     }
 
 
@@ -249,7 +395,7 @@ public class PointView {
         return true;
     }
 
-        public boolean checkActionContinue() {
+    public boolean checkActionContinue() {
         boolean checkActionContinue = false;
         do {
             System.out.println("Nhập \"Y\" để quay về giao diện trước đó, nhập \"N\" để quay về giao diện Menu!");

@@ -1,56 +1,54 @@
 package service;
 
 import model.EClass;
+import model.Student;
 import utils.CSVUtils;
 
 import java.util.List;
 
 public class ClassService {
     private static final String PATH  = "./src/data/class.csv";
-    public static List<EClass> eClassList;
-    static {
-        eClassList = CSVUtils.readFile(PATH , EClass.class);
 
-    }
 
     public List<EClass> findAllEClass() {
-        return eClassList;
+        return CSVUtils.readFile(PATH , EClass.class);
     }
 
     public void addClass(EClass s){
-        eClassList.add(s);
-        CSVUtils.writeFile(PATH,eClassList);
+        List<EClass> list = findAllEClass();
+        list.add(s);
+        CSVUtils.writeFile(PATH,list);
     }
 
     public EClass findClassByID(int idEClass){
-        for(int i = 0 ; i<eClassList.size() ; i++){
-            if(eClassList.get(i).getId() == idEClass){
-                return eClassList.get(i);
+        List<EClass> list = findAllEClass();
+        for(int i = 0 ; i<list.size() ; i++){
+            if(list.get(i).getId() == idEClass){
+                return list.get(i);
             }
         }
         return null;
     }
 
-    public void editEClass(int idEClass){
-        for(int i = 0 ; i<eClassList.size();i++){
-            if(eClassList.get(i).getId() == idEClass){
-                eClassList.get(i).setName(eClassList.get(i).getName());
+    public void editEClass(int idEClass , EClass eClass){
+        List<EClass> list = findAllEClass();
+        for(EClass items : list)
+            if(items.getId() == idEClass){
+                items.setName(eClass.getName());
             }
-        }
-        CSVUtils.writeFile(PATH,eClassList);
+
+        CSVUtils.writeFile(PATH,list);
     }
 
     public void deleteEClass(int idEClass){
-        for(int i =0 ; i <eClassList.size();i++){
-            if(eClassList.get(i).getId() == idEClass) {
-                eClassList.remove(eClassList.get(i));
-            }
-        }
-        CSVUtils.writeFile(PATH,eClassList);
+        List<EClass> list = findAllEClass();
+        list.removeIf(items -> items.getId() == idEClass);
+        CSVUtils.writeFile(PATH,list);
     }
 
     public boolean existEClass(int idEClass){
-        for (EClass items : eClassList) {
+        List<EClass> list = findAllEClass();
+        for (EClass items : list) {
             if (items.getId() == idEClass){
                 return true;
             }

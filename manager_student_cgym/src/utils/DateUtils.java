@@ -2,6 +2,7 @@ package utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import java.time.LocalDate;
@@ -68,4 +69,16 @@ public class DateUtils {
                 }
             }
         }
+
+    public static int getAgeByDOB(Date DOB){
+        Date currentDate = new Date();
+        Calendar clDOB = Calendar.getInstance();
+        Calendar clDate = Calendar.getInstance();
+
+        clDOB.setTime(DOB);
+        clDate.setTime(currentDate);
+
+        int age = clDate.get(Calendar.YEAR) - clDOB.get(Calendar.YEAR);
+        return age;
+    }
     }

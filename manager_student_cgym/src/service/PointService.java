@@ -59,7 +59,7 @@ public class PointService {
         List<Point> list = findAllStudentPoint(idCourse);
         for (Point items : list) {
             if (items.getIdStudent() == id && items.getIdCourse() == idCourse){
-                if(items.getIsPass() == EPass.STUDING){
+                if(items.getIsPass() == EPass.STUDYING){
                     return items;
                 }
             }
@@ -77,7 +77,7 @@ public class PointService {
     public void editStudentPoints(Point point , int idCourse){
         List<Point> list = findAllStudentPoint(idCourse);
         for(int i = 0 ; i<list.size();i++){
-            if(list.get(i).getIdStudent() == point.getIdStudent() && list.get(i).getIsPass().equals(EPass.STUDING)){
+            if(list.get(i).getIdStudent() == point.getIdStudent() && list.get(i).getIsPass().equals(EPass.STUDYING)){
                 //int pointID, int idStudent, float pointTH, float pointLT, float caseStudyPoint, float interviewPoint,
                 //                 int schedule.csv, double pointAVG, boolean isPass //
                 list.get(i).setIdEClass(point.getIdEClass());
@@ -96,7 +96,7 @@ public class PointService {
     public void checkIsPass(Point point){
         int idCourse = point.getIdCourse()+1;
         if(point.getIsPass().equals(EPass.PASS)){
-            Point point1 = new Point(point.getIdStudent(), point.getIdEClass(), point.getIdCourse()+1, 0.0f,0.0f,0.0f,0.0f,0.0d,EPass.STUDING);
+            Point point1 = new Point(point.getIdStudent(), point.getIdEClass(), point.getIdCourse()+1, 0.0f,0.0f,0.0f,0.0f,0.0d,EPass.STUDYING);
             if(point.getIdCourse() == 5){
                 System.out.println("da tot nghiep");
             }
@@ -106,20 +106,17 @@ public class PointService {
 
         }
         else if(point.getIsPass().equals(EPass.FAIL)){
-            Point point1 = new Point(point.getIdStudent(),point.getIdEClass()+1, point.getIdCourse(), 0.0f,0.0f,0.0f,0.0f,0.0d,EPass.STUDING);
+            Point point1 = new Point(point.getIdStudent(),point.getIdEClass()+1, point.getIdCourse(), 0.0f,0.0f,0.0f,0.0f,0.0d,EPass.STUDYING);
             CSVUtils.writeData("./src/data/pointmodule"+point.getIdCourse()+".csv",point1);
         }
     }
 
     public void deletePointStudent(int idStudent , int idCourse){
         List<Point> list = findAllStudentPoint(idCourse);
-        for(Point items :list){
-            if(items.getIdStudent() == idStudent && items.getIdCourse() == idCourse){
-                list.remove(items);
-            }
-        }
-        CSVUtils.writeFile("./src/data/pointmodule" +idCourse +".csv",list);
+        list.removeIf(items -> items.getIdStudent() == idStudent && items.getIdCourse() == idCourse);
+        CSVUtils.writeFile("./src/data/pointmodule"+idCourse+".csv",list);
     }
+
 
     public boolean existStudentPoint(int id,int idCourse){
         List<Point> list = findAllStudentPoint(idCourse);

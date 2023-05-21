@@ -1,11 +1,8 @@
 package view;
-import org.w3c.dom.ls.LSOutput;
-import view.PointView;
-import view.StudentView;
 
 import java.util.Scanner;
 
-public class Menu {
+public class AdminView {
 
     static PointView pointView ;
     static StudentView studentView;
@@ -14,7 +11,7 @@ public class Menu {
 
     static ModuleView moduleView;
     public static Scanner scanner = new Scanner(System.in);
-    public Menu(){
+    public AdminView(){
         pointView = new PointView();
         studentView = new StudentView();
         classView = new ClassView();
@@ -27,7 +24,8 @@ public class Menu {
             System.out.println("                    ║               1. Quản Lý Sinh Viên            ║");
             System.out.println("                    ║               2. Quản Lý Điểm                 ║");
             System.out.println("                    ║               3. Quản lý Lớp Học              ║");
-            System.out.println("                    ║               4. Exits                        ║");
+            System.out.println("                    ║               4. Quản lý Module               ║");
+            System.out.println("                    ║               5. Exits                        ║");
             System.out.println("                    ╚═══════════════════════════════════════════════╝");
             System.out.print("Vui lòng chọn một lựa chọn: ");
 
@@ -49,6 +47,10 @@ public class Menu {
                             flap = false;
                             break;
                         case 4:
+                            moduleView.launcherCourse();
+                            flap = false;
+                            break;
+                        case 5:
                             System.out.println("BYE BYE!!!");
                             flap = false;
                             break;
