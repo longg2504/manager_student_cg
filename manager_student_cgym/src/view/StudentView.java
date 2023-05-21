@@ -43,8 +43,7 @@ public class StudentView {
         System.out.println("                    ║        4: Sửa thông tin sinh viên                  ║");
         System.out.println("                    ║        5: Tìm sinh viên theo tên                   ║");
         System.out.println("                    ║        6: Tìm kiếm sinh viên theo ID               ║");
-        System.out.println("                    ║        7: Xem danh sách sinh viên theo module & lớp║");
-        System.out.println("                    ║        8: Quay lại Menu                            ║");
+        System.out.println("                    ║        7: Quay lại Menu                            ║");
         System.out.println("                    ╚════════════════════════════════════════════════════╝");
         System.out.print("Vui lòng chọn một lựa chọn: ");
     }
@@ -58,32 +57,24 @@ public class StudentView {
                 switch (actionMenu) {
                     case 1:
                         showListStudentByClass();
-                        checkAction = checkActionContinue();
                         break;
                     case 2:
                         showCreateStudent();
-                        checkAction = checkActionContinue();
                         break;
                     case 3:
                         inputDelete();
-                        checkAction = checkActionContinue();
                         break;
                     case 4:
                         showStudent(studentService.findAllStudent());
                         updateStudent();
-                        checkAction = checkActionContinue();
                         break;
                     case 5:
                         findNameStudent();
-                        checkAction = checkActionContinue();
                         break;
                     case 6:
                         findStudentById();
-                        checkAction = checkActionContinue();
                         break;
                     case 7:
-
-                    case 8:
                         checkAction = true;
                         break;
                     default:
@@ -131,7 +122,7 @@ public class StudentView {
 
     public void showListStudentByClass(){
         boolean checkIdCourse = true;
-        boolean checkAction = true;
+        boolean checkAction = false;
         boolean checkIdEClass = true;
         int idCourse = 0;
         int idEClass = 0;

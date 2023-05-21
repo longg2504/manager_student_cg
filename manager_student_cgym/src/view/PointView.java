@@ -53,29 +53,21 @@ public class PointView {
             switch (actionMenu) {
                 case 1:
                     showListStudent();
-                    actionCheck = checkActionContinue();
                     break;
                 case 2:
                     showCreateStudentPoint();
-                    actionCheck = checkActionContinue();
                     break;
                 case 3:
                     deleteStudentPoint();
-                    actionCheck = checkActionContinue();
                     break;
                 case 4:
                     showListPointStudentByClass();
-                    actionCheck = checkActionContinue();
                     break;
                 case 5:
                     showListStudentPass();
-                    actionCheck = checkActionContinue();
                     break;
                 case 6:
-                    System.out.println("Nhập vào id của sinh viên muốn xem lịch sử học");
-                    int id = Integer.parseInt(scanner.nextLine());
-                    showListPoint(pointService.findClassStudent(id));
-                    actionCheck = checkActionContinue();
+                    showHistory();
                     break;
                 case 7:
                     actionCheck = true;
@@ -90,6 +82,34 @@ public class PointView {
             AdminView adminView = new AdminView();
             adminView.menuView();
         }
+    }
+
+    public void showHistory(){
+        int id = 0;
+        boolean checkID = true;
+        do {
+            System.out.println("Nhập vào id của sinh viên muốn xem lịch sử học");
+            try{
+                 id = Integer.parseInt(scanner.nextLine());
+            }catch (NumberFormatException e){
+                System.out.println("ID định dạng không đúng vui lòng nhập lại");
+                continue;
+            }
+            if(id<=0){
+                System.out.println("ID phải lớn hơn không");
+                checkID= true;
+            }
+            else{
+                if(studentService.isStudentExist(id)){
+                    showListPoint(pointService.findClassStudent(id));
+                    checkID = checkAgaint();
+                }
+                else{
+                    System.out.println("Không có sinh viên này trong danh sách");
+                    checkID = checkAgaint();
+                }
+            }
+        }while (checkID);
     }
 
     private void showListStudent() {
