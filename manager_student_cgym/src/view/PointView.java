@@ -51,31 +51,17 @@ public class PointView {
             menuPoint();
             int actionMenu = Integer.parseInt(scanner.nextLine());
             switch (actionMenu) {
-                case 1:
-                    showListStudent();
-                    break;
-                case 2:
-                    showCreateStudentPoint();
-                    break;
-                case 3:
-                    deleteStudentPoint();
-                    break;
-                case 4:
-                    showListPointStudentByClass();
-                    break;
-                case 5:
-                    showListStudentPass();
-                    break;
-                case 6:
-                    showHistory();
-                    break;
-                case 7:
-                    actionCheck = true;
-                    break;
-                default:
+                case 1 -> showListStudent();
+                case 2 -> showCreateStudentPoint();
+                case 3 -> deleteStudentPoint();
+                case 4 -> showListPointStudentByClass();
+                case 5 -> showListStudentPass();
+                case 6 -> showHistory();
+                case 7 -> actionCheck = true;
+                default -> {
                     System.out.println("chọn chức năng không đúng vui lòng chọn lại");
                     actionCheck = true;
-                    break;
+                }
             }
         } while (!actionCheck);
         if (actionCheck) {
@@ -106,7 +92,7 @@ public class PointView {
                 }
                 else{
                     System.out.println("Không có sinh viên này trong danh sách");
-                    checkID = checkAgaint();
+                    checkID = false;
                 }
             }
         }while (checkID);
@@ -124,7 +110,7 @@ public class PointView {
                 System.out.println("nhập sai định dạng vui lòng nhập lại");
                 continue;
             }
-            if (idCourse <= 0 && idCourse > 6) {
+            if (idCourse <= 0 || idCourse > 6) {
                 System.out.println("không có module trên vui lòng chọn module có trong chương trình dạy ");
                 checkAction = true;
             } else {
@@ -147,7 +133,7 @@ public class PointView {
                 System.out.println("Nhập sai định dạng vui lòng nhập lại");
                 continue;
             }
-            if (idCourse <= 0 && idCourse > 6) {
+            if (idCourse <= 0 || idCourse > 6) {
                 System.out.println("không có module trên vui lòng chọn module có trong chương trình dạy ");
                 checkAction = true;
             } else {
@@ -171,7 +157,7 @@ public class PointView {
                 System.out.println("nhập sai định dạng vui lòng nhập lại");
                 continue;
             }
-            if (idCourse <= 0 && idCourse > 6) {
+            if (idCourse <= 0 || idCourse > 6) {
                 System.out.println("không có module trên vui lòng chọn module có trong chương trình dạy ");
                 checkModule = true;
             } else {
@@ -187,7 +173,7 @@ public class PointView {
                 System.out.println("nhập sai định dạng vui lòng nhập lại");
                 continue;
             }
-            if (idEClass <= 0 && idEClass > 10) {
+            if (idEClass <= 0 || idEClass > 10) {
                 System.out.println("không có class trên vui lòng chọn class có trong chương trình dạy ");
                 checkClass = true;
             } else {
@@ -212,7 +198,7 @@ public class PointView {
                 System.out.println("nhập sai định dạng vui lòng nhập lại");
                 continue;
             }
-            if (idCourse <= 0 && idCourse > 6) {
+            if (idCourse <= 0 || idCourse > 6) {
                 System.out.println("không có module trên vui lòng chọn module có trong chương trình dạy ");
                 checkModule = true;
             } else {
@@ -262,7 +248,7 @@ public class PointView {
                     System.out.println("Định dạng không đúng vui lòng nhập lại");
                     continue;
                 }
-                if (idCourse <= 0 && idCourse > 6) {
+                if (idCourse <= 0 || idCourse > 6) {
                     System.out.println("chỉ được chọn các module có trong danh sách");
                     checkid = true;
                 } else {
@@ -291,67 +277,75 @@ public class PointView {
                 boolean checkPointLT = true;
                 boolean checkPointCase = true;
                 boolean checkPointInterview = true;
+                float pointTH = 0;
+                float pointLT = 0;
+                float pointCaseStuty =0;
+                float pointInterview = 0;
                 do{
                     System.out.println("Nhập Điểm Thực Hành");
                     try{
-                        point.setPointTH(Float.parseFloat(scanner.nextLine()));
+                        pointTH=Float.parseFloat(scanner.nextLine());
                     }catch (Exception e){
                         System.out.println("nhập điểm sai định dạng vui lòng nhập lại");
                         continue;
                     }
-                    if(Float.parseFloat(scanner.nextLine()) < 0 && Float.parseFloat(scanner.nextLine()) > 10){
+                    if(pointTH < 0 || pointTH > 10){
                         System.out.println("nhập điểm quá với giới hạn điểm (0-10)");
                         checkPointTH = true;
                     }
                     else{
+                        point.setPointTH(pointTH);
                         checkPointTH = false;
                     }
                 }while (checkPointTH);
                 do{
                     System.out.println("Nhập Điểm Lý Thuyết");
                     try{
-                        point.setPointLT(Float.parseFloat(scanner.nextLine()));
+                        pointLT=Float.parseFloat(scanner.nextLine());
                     }catch (Exception e){
                         System.out.println("nhập điểm sai định dạng vui lòng nhập lại");
                         continue;
                     }
-                    if(Float.parseFloat(scanner.nextLine()) < 0 && Float.parseFloat(scanner.nextLine()) > 10){
+                    if(pointLT < 0 || pointLT > 10){
                         System.out.println("nhập điểm quá với giới hạn điểm (0-10)");
                         checkPointLT = true;
                     }
                     else{
+                        point.setPointLT(pointLT);
                         checkPointLT = false;
                     }
                 }while (checkPointLT);
                 do{
                     System.out.println("Nhập Điểm CaseStudy");
                     try{
-                        point.setCaseStudyPoint(Float.parseFloat(scanner.nextLine()));
+                        pointCaseStuty=Float.parseFloat(scanner.nextLine());
                     }catch (Exception e){
                         System.out.println("nhập điểm sai định dạng vui lòng nhập lại");
                         continue;
                     }
-                    if(Float.parseFloat(scanner.nextLine()) < 0 && Float.parseFloat(scanner.nextLine()) > 10){
+                    if(pointCaseStuty < 0 || pointCaseStuty > 10){
                         System.out.println("nhập điểm quá với giới hạn điểm (0-10)");
                         checkPointCase = true;
                     }
                     else{
+                        point.setCaseStudyPoint(pointCaseStuty);
                         checkPointCase = false;
                     }
                 }while (checkPointCase);
                 do{
                     System.out.println("Nhập Điểm Phỏng Vấn");
                     try{
-                        point.setinterviewPoint(Float.parseFloat(scanner.nextLine()));
+                        pointInterview=Float.parseFloat(scanner.nextLine());
                     }catch (Exception e){
                         System.out.println("nhập điểm sai định dạng vui lòng nhập lại");
                         continue;
                     }
-                    if(Float.parseFloat(scanner.nextLine()) < 0 && Float.parseFloat(scanner.nextLine()) > 10){
+                    if(pointInterview < 0 || pointInterview > 10){
                         System.out.println("nhập điểm quá với giới hạn điểm (0-10)");
                         checkPointInterview = true;
                     }
                     else{
+                        point.setinterviewPoint(pointInterview);
                         checkPointInterview = false;
                     }
                 }while (checkPointInterview);

@@ -309,7 +309,6 @@ public class StudentView {
         do {
             System.out.println("Chọn Lớp Học");
             classView.showListClass(classService.findAllEClass());
-
             try {
                 idEClass = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {

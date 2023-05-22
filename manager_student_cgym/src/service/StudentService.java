@@ -75,11 +75,7 @@ public class StudentService {
 
     public void deleteStudent(int idStudent) {
         List<Student> list = findAllStudent();
-        for (Student item : list) {
-            if (item.getId() == idStudent) {
-                list.remove(item);
-            }
-        }
+        list.removeIf(item -> item.getId() == idStudent);
         CSVUtils.writeFile(PATH, list);
     }
     public void deleteStudentAllList(int idStudent){
